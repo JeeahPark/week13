@@ -1,18 +1,11 @@
 const express = require("express");
 const {Users, UserInfos} = require("../models");
+const { userRegisterationRules, validate} = require('../middlewares/validators-middleware');
 const router = express.Router();
 
 // join
 router.post("/users", async (req, res) =>{
-    const { nickname, password, name, profileImage } = req.body; //confirmPassword 어떻게 확인?
-
-    // 회원가입시 확인 조건
-    // 닉네임 최소 3자 이상, 알파벳 대소문자, 숫자로 구성
-    
-    // 비밀번호 최소 4자 이상, 닉네임과 같은 값이 포함된 경우 회원가입 실패
-
-    // 비밀번호 확인은 비밀번호와 정확하게 일치하기 (넘길 필요는 없음)
-
+    const { nickname, password, name, profileImage } = req.body; 
 
     const isExistUser = await Users.findOne({where: {nickname} });
     if (isExistUser){
@@ -25,8 +18,6 @@ router.post("/users", async (req, res) =>{
     const userInfo = await UserInfos.create({
         UserId: user.UserId, // 생성한 유저의 userId를 바탕으로 사용자 정보를 생성
         name,
-        age,
-        gender: gender.toUpperCase(),
         profileImage
     });
 
@@ -59,7 +50,7 @@ router.post("/login", async (req, res) => {
       include: [
         {
           model: UserInfos,  // 1:1 관계를 맺고있는 UserInfos 테이블을 조회합니다.
-          attributes: ["name", "age", "gender", "profileImage"],
+          attributes: ["name", "profileImage"],
         }
       ],
       where: { userId }
@@ -67,7 +58,6 @@ router.post("/login", async (req, res) => {
   
     return res.status(200).json({ data: user });
   });
-
 
 
 module.exports = router;
