@@ -23,8 +23,6 @@ const userRegisterationRules = ()=>{
                 }
                 return true;
             }),
-        body('name').notEmpty().withMessage('Name is required'),
-        body('profileImage').optional().isURL().withMessage('Profile Image must be a valid URL'),
     ];
 };
 

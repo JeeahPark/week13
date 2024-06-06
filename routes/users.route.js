@@ -1,11 +1,11 @@
 const express = require("express");
-const {Users, UserInfos} = require("../models");
+const {Users} = require("../models");
 const { userRegisterationRules, validate} = require('../middlewares/validators-middleware');
 const router = express.Router();
 
 // join
-router.post("/users", async (req, res) =>{
-    const { nickname, password, name, profileImage } = req.body; 
+router.post("/users",userRegisterationRules(),validate, async (req, res) =>{
+    const { nickname, password, confirmPassword } = req.body; 
 
     const isExistUser = await Users.findOne({where: {nickname} });
     if (isExistUser){
@@ -14,12 +14,6 @@ router.post("/users", async (req, res) =>{
 
     // Users 테이블에 사용자 추가
     const user = await Users.create({nickname, password});
-    // User Infos 테이블에 사용자 정보 추가
-    const userInfo = await UserInfos.create({
-        UserId: user.UserId, // 생성한 유저의 userId를 바탕으로 사용자 정보를 생성
-        name,
-        profileImage
-    });
 
     return res.status(201).json({message: "회원가입이 완료되었습니다."});
 });
@@ -29,9 +23,9 @@ router.post("/login", async (req, res) => {
     const { nickname, password } = req.body;
     const user = await Users.findOne({ where: { nickname } });
     if (!user) {
-      return res.status(401).json({ message: "존재하지 않는 이메일입니다." });
+      return res.status(401).json({ message: "닉네임 또는 패스워드를 확인해주세요." });
     } else if (user.password !== password) {
-      return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
+      return res.status(401).json({ message: "닉네임 또는 패스워드를 확인해주세요." });
     }
   
     const token = jwt.sign({
@@ -47,12 +41,6 @@ router.post("/login", async (req, res) => {
   
     const user = await Users.findOne({
       attributes: ["userId", "nickname", "createdAt", "updatedAt"],
-      include: [
-        {
-          model: UserInfos,  // 1:1 관계를 맺고있는 UserInfos 테이블을 조회합니다.
-          attributes: ["name", "profileImage"],
-        }
-      ],
       where: { userId }
     });
   
