@@ -1,0 +1,10 @@
+{
+  "development": {
+    "username": "admin",
+    "password": "jungle1234",
+    "database": "database_w13",
+    "host": "express-database.czyuak04id8i.ap-northeast-2.rds.amazonaws.com",
+    "dialect": "mysql"
+  }
+
+}
