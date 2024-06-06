@@ -32,7 +32,14 @@ const validate = (req, res, next) => {
     if (errors.isEmpty()){
         return next();
     }
-    return res.status(400).json({errors: errors.array() });
+
+    // remove unneccessary information
+    const extractedErrors = errors.array().map(err =>{
+        const {type, value, path, location, ...rest } = err;
+        return rest;
+    })
+
+    return res.status(400).json({errors: extractedErrors });
 };
 
 module.exports = {
