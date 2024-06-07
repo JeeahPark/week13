@@ -1,20 +1,24 @@
 const express = require("express");
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');  // password hashing
 const {Users} = require("../models");
 const { userRegisterationRules, validate} = require('../middlewares/validators-middleware');
 const router = express.Router();
 
 // join
 router.post("/users",userRegisterationRules(),validate, async (req, res) =>{
-    const { nickname, password, confirmPassword } = req.body; 
+    const { nickname, password, confirmPassword } = req.body; // confirmPassword from client no need to store it into DB
 
     const isExistUser = await Users.findOne({where: {nickname} });
     if (isExistUser){
         return res.status(409).json({message: "중복된 닉네임입니다."});
     }
 
+    // password hashing
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Users 테이블에 사용자 추가
-    const user = await Users.create({nickname, password});
+    const user = await Users.create({nickname, hashedPassword});
 
     return res.status(201).json({message: "회원가입이 완료되었습니다."});
 });
@@ -23,9 +27,13 @@ router.post("/users",userRegisterationRules(),validate, async (req, res) =>{
 router.post("/login", async (req, res) => {
     const { nickname, password } = req.body;
     const user = await Users.findOne({ where: { nickname } });
+    // check if user exists
     if (!user) {
       return res.status(401).json({ message: "닉네임 또는 패스워드를 확인해주세요." });
-    } else if (user.password !== password) {
+    } 
+    // check password matching
+    const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
+    if(!passwordMatch){
       return res.status(401).json({ message: "닉네임 또는 패스워드를 확인해주세요." });
     }
   
