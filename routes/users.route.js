@@ -1,4 +1,5 @@
 const express = require("express");
+const jwt = require('jsonwebtoken');
 const {Users} = require("../models");
 const { userRegisterationRules, validate} = require('../middlewares/validators-middleware');
 const router = express.Router();
@@ -34,6 +35,14 @@ router.post("/login", async (req, res) => {
     res.cookie("authorization", `Bearer ${token}`);
     return res.status(200).json({ message: "로그인 성공" });
   });
+
+
+// log out
+router.post("/logout", (req, res)=>{
+  res.clearCookie("authorization"); // clear the cookie
+  return res.status(200).json({message: "로그아웃 성공"});
+})
+
 
   // 사용자 조회
   router.get("/users/:userId", async (req, res) => {
