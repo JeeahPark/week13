@@ -7,7 +7,7 @@ const router = express.Router();
 
 // join
 router.post("/users",userRegisterationRules(),validate, async (req, res) =>{
-    const { nickname, password, confirmPassword } = req.body; 
+    const { nickname, password, confirmPassword } = req.body; // confirmPassword from client no need to store it into DB
 
     const isExistUser = await Users.findOne({where: {nickname} });
     if (isExistUser){
@@ -26,9 +26,12 @@ router.post("/users",userRegisterationRules(),validate, async (req, res) =>{
 router.post("/login", async (req, res) => {
     const { nickname, password } = req.body;
     const user = await Users.findOne({ where: { nickname } });
+    // check if user exists
     if (!user) {
       return res.status(401).json({ message: "닉네임 또는 패스워드를 확인해주세요." });
     } 
+  
+    // check password matching
     const passwordMatch = await argon2.verify(user.password, password);
     if (!passwordMatch){
       return res.status(401).json({message: "닉네임 또는 패스워드를 확인해주세요."});
