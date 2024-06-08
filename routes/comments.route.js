@@ -21,13 +21,13 @@ router.post("/posts/:postId", authMiddleware, commentingRules(), commentValidate
 
 });
 
-// get comments for a post
-router.get('/posts/:postId', async (req, res) => {
-  const {postId} = req.params;
+// // get comments for a post
+// router.get('/posts/:postId', async (req, res) => {
+//   const {postId} = req.params;
 
-  const comments = await Comments.findAll({ where: {postId }});
-  return res.status(200).json({data:comments});
-});
+//   const comments = await Comments.findAll({ where: {postId }});
+//   return res.status(200).json({data:comments});
+// });
 
 // update a comment
 router.put("/posts/:postId/:commentId", authMiddleware, commentingRules(), commentValidate, async (req, res) => {

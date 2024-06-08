@@ -1,7 +1,7 @@
 
 const express = require("express");
 const { Op } = require('sequelize');
-const { Users, Posts } = require("../models");
+const { Users, Posts, Comments } = require("../models");
 const authMiddleware = require("../middlewares/auth-middleware");
 const { postingRules, postValidate} = require('../middlewares/post-middleware');
 const router = express.Router();
@@ -36,7 +36,7 @@ router.get("/posts", async (req, res) => {
     return res.status(200).json({ data: posts });
   });
 
-// 게시글 상세 조회
+// 게시글 상세 조회 + comments
 router.get("/posts/:postId", async (req, res) => {
     const { postId } = req.params;
     const post = await Posts.findOne({
@@ -45,6 +45,17 @@ router.get("/posts/:postId", async (req, res) => {
         {
           model: Users,
           attributes: ["nickname"],
+        },
+        {
+          model: Comments,
+          attributes: ["comment"],
+          include: [
+            {
+              model: Users,
+              attributes: ["nickname"],
+            }
+          ]
+          
         }
       ],
       where: { postId }
