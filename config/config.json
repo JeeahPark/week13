@@ -6,5 +6,4 @@
     "host": "express-database.czyuak04id8i.ap-northeast-2.rds.amazonaws.com",
     "dialect": "mysql"
   }
-
 }
