@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-  "bcrypt": "^5.1.1"
+    "argon2": "^0.40.3",
+    "bcrypt": "^5.1.1"
   }
 }
