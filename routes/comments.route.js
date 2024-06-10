@@ -6,7 +6,7 @@ const {Op} = require('sequelize');
 const router = express.Router();
 
 // create a comment
-router.post("/posts/:postId", authMiddleware, commentingRules(), commentValidate, async (req, res) => {
+router.post("/posts/:postId/comment", authMiddleware, commentingRules(), commentValidate, async (req, res) => {
     const { postId } = req.params;
     const { userId } = res.locals.user;
     const { comment } = req.body;
@@ -21,16 +21,16 @@ router.post("/posts/:postId", authMiddleware, commentingRules(), commentValidate
 
 });
 
-// // get comments for a post
-// router.get('/posts/:postId', async (req, res) => {
-//   const {postId} = req.params;
+// get comments for a post
+router.get('/posts/:postId/comment', async (req, res) => {
+  const {postId} = req.params;
 
-//   const comments = await Comments.findAll({ where: {postId }});
-//   return res.status(200).json({data:comments});
-// });
+  const comments = await Comments.findAll({ where: {postId }});
+  return res.status(200).json({data:comments});
+});
 
 // update a comment
-router.put("/posts/:postId/:commentId", authMiddleware, commentingRules(), commentValidate, async (req, res) => {
+router.put("/posts/:postId/comment/:commentId", authMiddleware, commentingRules(), commentValidate, async (req, res) => {
     const {postId, commentId} = req.params;
     const {userId} = res.locals.user;
     const {comment} = req.body;
@@ -53,7 +53,7 @@ router.put("/posts/:postId/:commentId", authMiddleware, commentingRules(), comme
   });
 
 // Delete a comment
-router.delete('/posts/:postId/:commentId', authMiddleware, async (req, res) => {
+router.delete('/posts/:postId/comment/:commentId', authMiddleware, async (req, res) => {
   const {postId, commentId} = req.params;
   const {userId} = res.locals.user;
 
@@ -65,6 +65,5 @@ router.delete('/posts/:postId/:commentId', authMiddleware, async (req, res) => {
   return res.status(200).json({message: "댓글이 삭제되었습니다."});
 
 });
-
 
 module.exports = router;
